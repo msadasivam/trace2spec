@@ -2,10 +2,12 @@
 Generate Open API Spec from Apigee trace file
 
 ## Usage
-`    python3 trace2spec.py -f <apigee-trace-file.xml>`
-`    `
-`      -f apigee trace file - off`
-`      -X verbose mode`
+```
+    python3 trace2spec.py -f <apigee-trace-file.xml>
+
+      -f apigee trace file - off
+      -X verbose mode
+```
 
 ## Apigee offline trace
 Learn here to extract offline trace from Apigee
