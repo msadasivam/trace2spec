@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<APIProxy revision="2" name="helloworld">
+    <Basepaths>/helloworld</Basepaths>
+    <ConfigurationVersion majorVersion="4" minorVersion="0"/>
+    <CreatedAt>1519779512681</CreatedAt>
+    <CreatedBy>user@enterprise.com</CreatedBy>
+    <Description></Description>
+    <DisplayName>helloworld</DisplayName>
+    <LastModifiedAt>1582245468663</LastModifiedAt>
+    <LastModifiedBy>user@enterprise.com</LastModifiedBy>
+    <ManifestVersion>SHA-512:0d87cff6d6ab92fae5d610d19c9f1cbcb5172b34689919266fa920141226f0c5fe879393738b8c78226e58779342e3ec39cabbf124243e857a97e7a074d8f00d</ManifestVersion>
+    <Policies>
+        <Policy>AssignMessageErrRoute</Policy>
+        <Policy>AssignMessageSuccRoute</Policy>
+        <Policy>AssignTargetURL</Policy>
+        <Policy>SpikeArrest</Policy>
+        <Policy>add-cors</Policy>
+        <Policy>impose-quota</Policy>
+        <Policy>remove-query-param-apikey</Policy>
+        <Policy>verify-api-key</Policy>
+    </Policies>
+    <ProxyEndpoints>
+        <ProxyEndpoint>default</ProxyEndpoint>
+    </ProxyEndpoints>
+    <Resources/>
+    <Spec></Spec>
+    <TargetServers/>
+    <TargetEndpoints>
+        <TargetEndpoint>default</TargetEndpoint>
+    </TargetEndpoints>
+</APIProxy>

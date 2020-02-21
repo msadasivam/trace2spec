@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="AssignMessageSuccRoute">
+    <DisplayName>AssignMessageSuccRoute</DisplayName>
+    <Properties/>
+    <AssignVariable>
+        <Name>httpbin_url</Name>
+        <Value>http://httpbin.org/{toLowerCase(request.verb)}</Value>
+    </AssignVariable>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+    <AssignTo createNew="false" transport="http" type="request"/>
+</AssignMessage>

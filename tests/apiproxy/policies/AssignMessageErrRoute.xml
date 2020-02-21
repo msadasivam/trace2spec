@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="AssignMessageErrRoute">
+    <DisplayName>AssignMessageErrRoute</DisplayName>
+    <Properties/>
+    <AssignVariable>
+        <Name>httpbin_url</Name>
+        <Value>http://httpbin.org/status/{request.queryparam.errorcode}</Value>
+    </AssignVariable>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+    <AssignTo createNew="false" transport="http" type="request"/>
+</AssignMessage>

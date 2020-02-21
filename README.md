@@ -16,7 +16,7 @@ More to come
 ```
     python3 trace2spec.py -f <apigee-trace-file.xml>
 
-      -f apigee trace file - off
+      -f apigee trace file
       -X verbose mode
 ```
 
