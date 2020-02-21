@@ -24,8 +24,8 @@ def skippable_req_headers(header):
 
 def cli_args():
     parser = OptionParser(version="%prog 0.5")
-    parser.add_option("-f", "--file", action="store", dest="file",
-                          default="", type="string",
+    parser.add_option("-f", "--file", action="append", dest="file",
+                          default=[], type="string",
                           help="Specify an Apigee trace file")
     parser.add_option("-X", "--verbose", action="store_true", dest="verbose",
                           default="", 
@@ -58,7 +58,7 @@ def query_params_parse(query_str):
     logging.debug("query %s", query_string)
     return query_string
 
-def trace_file_parse(trace_file):
+def trace_file_parse(trace_file, api_calls):
     tree = ET.parse(trace_file)
     root = tree.getroot()
 
@@ -80,8 +80,6 @@ def trace_file_parse(trace_file):
     #                 }
     #         }
     #    ] ...
-
-    api_calls = []
 
     # XML structure - DebugSession/Messages/Message/Data/Point/RequestMessage]
     for root_elem in root.findall('./Messages/Message'):
@@ -137,7 +135,10 @@ def trace_file_parse(trace_file):
                 status_code = res_data.find('StatusCode').text
                 reason_phrase = res_data.find('ReasonPhrase').text
                 node = res_data.find('Content')
-                if node is not None: resp_content = node.text
+                if node is not None:
+                    resp_content = node.text
+                else:
+                    resp_content = ""
 
                 req_resp["response"] = {
                     "status_code": status_code,
@@ -261,10 +262,11 @@ def spec20_assemble(spec_resources):
 def write_json_spec(dict_spec):
     return json.dumps(dict_spec, indent=4, sort_keys=False)
 
+api_calls = []
 options = cli_args()
-
-logging.debug('Processing %s', options.file)
-api_calls = trace_file_parse(options.file)
+for trace_file in options.file:
+    logging.debug('Processing %s', trace_file)
+    trace_file_parse(trace_file, api_calls)
 
 spec_resources = spec20_format_calls(api_calls)
 dict_spec = spec20_assemble(spec_resources)

@@ -7,17 +7,22 @@ Works with API calls traced in any order including calls returning error. Suppor
  * Headers
  * Response codes
  * Hosts
-
-More to come
  * Multiple trace file support
+ 
+More to come
  * Payload to schema
 
 ## Usage
 ```
-    python3 trace2spec.py -f <apigee-trace-file.xml>
+    python3 trace2spec.py -f <apigee-trace-file.xml> 
 
       -f apigee trace file
       -X verbose mode
+
+
+    Multiple trace files
+    --------------------
+    python3 trace2spec.py -f <apigee-trace-file.xml> -f <apigee-trace-file-2.xml> ...
 ```
 
 ## Apigee offline trace
