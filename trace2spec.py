@@ -119,11 +119,11 @@ def trace_file_parse(trace_file):
             if phase == 'PROXY_REQ_FLOW':
                 logging.debug('phase %s', phase)
                 req_data = data_point_elem.find('./RequestMessage')
-                if req_data.find('Content'): 
-                    payload = req_data.find('Content').text
-                    if payload:
-                        logging.debug('payload length %n', len(payload))
-                        req_resp["request"]["content"] = payload
+                node = req_data.find('Content')
+                if node is not None: 
+                    payload = node.text
+                    logging.debug('payload length %s', len(payload))
+                    req_resp["request"]["content"] = payload
 
             # response
             if phase == 'RESP_SENT':
@@ -136,7 +136,8 @@ def trace_file_parse(trace_file):
 
                 status_code = res_data.find('StatusCode').text
                 reason_phrase = res_data.find('ReasonPhrase').text
-                resp_content = res_data.find('Content').text
+                node = res_data.find('Content')
+                if node is not None: resp_content = node.text
 
                 req_resp["response"] = {
                     "status_code": status_code,
@@ -221,13 +222,13 @@ def spec20_format_calls(api_calls):
 
         # response codes
         if response_code not in rest_resources["paths"][path][verb]["responses"]:
-            logging.debug('response code added %n', response_code)
-            rest_resources["paths"][path][verb]["responses"] = {
+            logging.debug('response code added %s', response_code)
+            rest_resources["paths"][path][verb]["responses"].update({
                 response_code: {
                     "description": api_call["response"]["reason_phrase"],
                     "schema": {}
                 }
-            }
+            })
     return rest_resources
 
 def spec20_defaults():
