@@ -241,7 +241,7 @@ def spec20_defaults():
             "title": "Auto generated spec",
             "termsOfService": "",
             "contact": {
-                "email": "apiteam@swagger.io"
+                "email": "apiteam@apigee.io"
             },
             "license": {
                 "name": "Apache 2.0",
