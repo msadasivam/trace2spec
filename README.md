@@ -6,11 +6,12 @@ Works with API calls traced in any order including calls returning error. Suppor
  * Query parameters
  * Headers
  * Response codes
+ * Response payload schema
  * Hosts
  * Multiple trace file support
  
 More to come
- * Payload to schema
+ * Request payload to schema
 
 ## Usage
 ```
@@ -30,10 +31,6 @@ Learn here to extract offline trace from Apigee
 https://docs.apigee.com/api-platform/debug/using-offline-trace-tool
 
 ![Trace Download](https://docs.apigee.com/api-platform/images/download-trace-button-full.png "How to download offline trace file")
-
-## JSON to schema
-For JSON payload to schema generation use the following tool. Hoping to incorporate it into trace2spec for processing payload.
-https://pypi.org/project/genson/
 
 ## Support
 Please raise an issue.

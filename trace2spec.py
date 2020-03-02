@@ -1,12 +1,12 @@
 from urllib import parse
 from xml.etree import ElementTree as ET
 from optparse import OptionParser
+from genson import SchemaBuilder
 import json
 import logging
 
 # TODO : path params support
 # TODO : req payload support
-# TODO : resp payload support
 
 def skippable_req_headers(header):
     return header in {
@@ -23,7 +23,7 @@ def skippable_req_headers(header):
     }
 
 def cli_args():
-    parser = OptionParser(version="%prog 0.5")
+    parser = OptionParser(version="%prog 1.0.0")
     parser.add_option("-f", "--file", action="append", dest="file",
                           default=[], type="string",
                           help="Specify an Apigee trace file")
@@ -59,6 +59,7 @@ def query_params_parse(query_str):
     return query_string
 
 def trace_file_parse(trace_file, api_calls):
+    logging.debug('Processing ====> %s', trace_file)
     tree = ET.parse(trace_file)
     root = tree.getroot()
 
@@ -84,9 +85,9 @@ def trace_file_parse(trace_file, api_calls):
     # XML structure - DebugSession/Messages/Message/Data/Point/RequestMessage]
     for root_elem in root.findall('./Messages/Message'):
         req_resp = {}
-        logging.debug("----------------------------------------------------")
-        logging.debug(root_elem.find('DebugId').text)
-        logging.debug("----------------------------------------------------")
+        # logging.debug("----------------------------------------------------")
+        logging.debug("msgid %s", root_elem.find('DebugId').text)
+        # logging.debug("----------------------------------------------------")
         for data_point_elem in root_elem.findall('./Data/Point[@id=\'StateChange\']'):
             phase = data_point_elem.find('./DebugInfo/Properties/Property[@name=\'To\']').text
 
@@ -165,6 +166,28 @@ def find_hosts(api_calls):
 def find_schemes(api_calls):
     return ["https"]
 
+def json2schema(seed, payload):
+    logging.debug("seed schema %s resp payload %s", seed, payload)
+    builder = SchemaBuilder(schema_uri=None)
+    if seed:
+        builder.add_schema(seed)
+
+    if payload.endswith('.....'):
+        logging.warn('skipping truncated payload')
+        return None
+
+    payload_dict = None
+    try:
+        payload_dict = json.loads(payload)
+    except ValueError as e:
+        logging.warn('skipping unrecognized payload')
+        return None
+
+    builder.add_object(payload_dict)
+    schema = builder.to_schema()
+    logging.debug('schema updated %s', schema)
+    return schema
+
 def spec20_format_calls(api_calls):
     rest_resources = {}
     rest_resources["host"] = find_hosts(api_calls)
@@ -175,14 +198,9 @@ def spec20_format_calls(api_calls):
         path = api_call["request"]["path"]
         verb = api_call["request"]["verb"].lower()
         response_code = api_call["response"]["status_code"]
+        response_payload = api_call["response"]["content"]
 
         if response_code == 404: continue
-
-        if (path in rest_resources["paths"] and
-             verb in rest_resources["paths"][path] and
-              response_code in rest_resources["paths"][path][verb]["responses"]):
-               logging.debug('known path skipping')
-               continue
 
         if path not in rest_resources["paths"]:
             rest_resources["paths"][path] = {}
@@ -222,14 +240,24 @@ def spec20_format_calls(api_calls):
             }
 
         # response codes
-        if response_code not in rest_resources["paths"][path][verb]["responses"]:
-            logging.debug('response code added %s', response_code)
-            rest_resources["paths"][path][verb]["responses"].update({
-                response_code: {
-                    "description": api_call["response"]["reason_phrase"],
-                    "schema": {}
-                }
-            })
+        logging.debug('response code found %s', response_code)
+        spec_responses = rest_resources["paths"][path][verb]["responses"]
+        if response_code not in spec_responses:
+            spec_responses[response_code] = {
+                "description": api_call["response"]["reason_phrase"]
+            }
+
+        if not response_payload:
+            continue
+
+        if "schema" in spec_responses[response_code]:
+            existing_schema = spec_responses[response_code]["schema"]
+        else:
+            existing_schema = None
+
+        schema_snippet = json2schema(existing_schema, response_payload)
+        if schema_snippet:
+            spec_responses[response_code]["schema"] = schema_snippet
     return rest_resources
 
 def spec20_defaults():
@@ -262,14 +290,19 @@ def spec20_assemble(spec_resources):
 def write_json_spec(dict_spec):
     return json.dumps(dict_spec, indent=4, sort_keys=False)
 
-api_calls = []
-options = cli_args()
-for trace_file in options.file:
-    logging.debug('Processing %s', trace_file)
-    trace_file_parse(trace_file, api_calls)
 
-spec_resources = spec20_format_calls(api_calls)
-dict_spec = spec20_assemble(spec_resources)
-json_spec = write_json_spec(dict_spec)
+def main():
+    api_calls = []
+    options = cli_args()
+    for trace_file in options.file:
+        trace_file_parse(trace_file, api_calls)
 
-print(json_spec)
+    logging.debug("--------------------- generating spec ---------------------")
+    spec_resources = spec20_format_calls(api_calls)
+    dict_spec = spec20_assemble(spec_resources)
+    json_spec = write_json_spec(dict_spec)
+
+    print(json_spec)
+
+
+main()
