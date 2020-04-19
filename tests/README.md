@@ -4,44 +4,50 @@
  * Turn on tracing
  * Run following commands to get a usable trace file for the tool
 ```
-curl -X GET    'https://madhans-trial-test.apigee.net/helloworld/greetings' 
-curl -X DELETE 'https://madhans-trial-test.apigee.net/helloworld/greetings' 
-curl -X PUT    'https://madhans-trial-test.apigee.net/helloworld/greetings' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
-curl -X POST   'https://madhans-trial-test.apigee.net/helloworld/greetings' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
-curl -X POST   'https://madhans-trial-test.apigee.net/helloworld/greetings' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
-curl -X PATCH  'https://madhans-trial-test.apigee.net/helloworld/greetings' -H 'Content-Type: application/json' -d '{"balance": "45.23"}'
-curl -X GET    'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=500'
-curl -X DELETE 'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=500' 
-curl -X PUT    'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=500' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
-curl -X POST   'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=500' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
-curl -X PATCH  'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=500' -H 'Content-Type: application/json' -d '{"balance": "45.23"}'
-curl -X GET    'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=400'
-curl -X DELETE 'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=400' 
-curl -X PUT    'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=400' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
-curl -X POST   'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=400' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
-curl -X PATCH  'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=400' -H 'Content-Type: application/json' -d '{"balance": "45.23"}'
-curl -X GET    'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=401'
-curl -X DELETE 'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=401' 
-curl -X PUT    'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=401' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
-curl -X POST   'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=401' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
-curl -X PATCH  'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=401' -H 'Content-Type: application/json' -d '{"balance": "45.23"}'
-curl -X GET    'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=403'
-curl -X DELETE 'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=403' 
-curl -X PUT    'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=403' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
-curl -X POST   'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=403' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
-curl -X PATCH  'https://madhans-trial-test.apigee.net/helloworld/greetings?errorcode=403' -H 'Content-Type: application/json' -d '{"balance": "45.23"}'
+curl -X GET    'https://api-trial-test.apigee.net/helloworld/greetings' 
+curl -X DELETE 'https://api-trial-test.apigee.net/helloworld/greetings' 
+curl -X PUT    'https://api-trial-test.apigee.net/helloworld/greetings' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
+curl -X POST   'https://api-trial-test.apigee.net/helloworld/greetings' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
+curl -X POST   'https://api-trial-test.apigee.net/helloworld/greetings' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
+curl -X PATCH  'https://api-trial-test.apigee.net/helloworld/greetings' -H 'Content-Type: application/json' -d '{"balance": "45.23"}'
+curl -X GET    'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=500'
+curl -X DELETE 'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=500' 
+curl -X PUT    'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=500' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
+curl -X POST   'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=500' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
+curl -X PATCH  'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=500' -H 'Content-Type: application/json' -d '{"balance": "45.23"}'
+curl -X GET    'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=400'
+curl -X DELETE 'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=400' 
+curl -X PUT    'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=400' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
+curl -X POST   'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=400' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
+curl -X PATCH  'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=400' -H 'Content-Type: application/json' -d '{"balance": "45.23"}'
+curl -X GET    'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=401'
+curl -X DELETE 'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=401' 
+curl -X PUT    'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=401' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
+curl -X POST   'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=401' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
+curl -X PATCH  'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=401' -H 'Content-Type: application/json' -d '{"balance": "45.23"}'
+curl -X GET    'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=403'
+curl -X DELETE 'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=403' 
+curl -X PUT    'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=403' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
+curl -X POST   'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=403' -H 'Content-Type: application/json' -d '{"balance": "45.23"}' 
+curl -X PATCH  'https://api-trial-test.apigee.net/helloworld/greetings?errorcode=403' -H 'Content-Type: application/json' -d '{"balance": "45.23"}'
 
-curl -X POST   'https://madhans-trial-test.apigee.net/helloworld/greetings' -H 'Content-Type: application/json' -d '[
+# accumulate query attributes
+curl -X GET    'https://api-trial-test.apigee.net/helloworld/greetings?filter=name' 
+curl -X GET    'https://api-trial-test.apigee.net/helloworld/greetings?search=quarter' 
+curl -X GET    'https://api-trial-test.apigee.net/helloworld/greetings?sort=asc&group=weekofyear' 
+
+# accumulate payload attributes
+curl -X POST   'https://api-trial-test.apigee.net/helloworld/greetings' -H 'Content-Type: application/json' -d '[
   {
     "age": 33
   }
 ]'
-curl -X POST   'https://madhans-trial-test.apigee.net/helloworld/greetings' -H 'Content-Type: application/json' -d '[
+curl -X POST   'https://api-trial-test.apigee.net/helloworld/greetings' -H 'Content-Type: application/json' -d '[
   {
     "eye": "green"
   }
 ]'
-curl -X POST   'https://madhans-trial-test.apigee.net/helloworld/greetings' -H 'Content-Type: application/json' -d '[
+curl -X POST   'https://api-trial-test.apigee.net/helloworld/greetings' -H 'Content-Type: application/json' -d '[
   {
     "_id": "5e586c56cc99e2c73312cad6",
     "index": 0,
@@ -54,7 +60,7 @@ curl -X POST   'https://madhans-trial-test.apigee.net/helloworld/greetings' -H '
     "name": "Cathryn Patton",
     "gender": "female",
     "company": "ANIXANG",
-    "email": "cathrynpatton@anixang.com",
+    "email": "guest@anixang.com",
     "phone": "+1 (814) 488-3296",
     "address": "107 Conover Street, Kingstowne, Colorado, 8015",
     "about": "Excepteur sint ad pariatur ut mollit dolore pariatur dolore tempor sit magna. Amet duis dolore do id esse aute cillum qui elit incididunt irure. Excepteur est consequat ut adipisicing amet esse et. Duis do amet minim ullamco sunt ea officia dolor nisi cillum mollit aute cillum. Magna veniam qui laboris officia duis velit.\r\n",

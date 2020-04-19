@@ -1,17 +1,20 @@
 # trace2spec
 Generate Open API Spec from Apigee trace file
 
-Works with API calls traced in any order including calls returning error. Supports the following 
+Works with API calls traced in any order including calls returning error. 
+Supports the following features:
+ * Hosts
  * REST resource paths
  * Query parameters
  * Headers
+ * Request payload schema
  * Response codes
  * Response payload schema
- * Hosts
  * Multiple trace file support
  
 More to come
- * Request payload to schema
+ * Resource path params
+ * Security schemes
 
 ## Usage
 ```

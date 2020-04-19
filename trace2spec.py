@@ -5,8 +5,7 @@ from genson import SchemaBuilder
 import json
 import logging
 
-# TODO : path params support
-# TODO : req payload support
+# TODO : path params support, is it even doable
 
 def skippable_req_headers(header):
     return header in {
@@ -22,11 +21,28 @@ def skippable_req_headers(header):
         "Content-Type": ""
     }
 
+def usage():
+    logging.error("Usage:")
+    logging.error("")
+    logging.error("trace2spec -f trace-file-1.xml")
+    logging.error("trace2spec -f trace-file-1.xml -f trace-file-2.xml")
+    logging.error("")
+    logging.error("trace2spec -j json-file-1.json")
+    logging.error("trace2spec -j json-file-1.json -j json-file-2.json")
+    logging.error("trace2spec -j json-file-1.json -s schema-file.json")
+    logging.error("")
+
 def cli_args():
     parser = OptionParser(version="%prog 1.0.0")
     parser.add_option("-f", "--file", action="append", dest="file",
                           default=[], type="string",
                           help="Specify an Apigee trace file")
+    parser.add_option("-j", "--json-file", action="append", dest="json_file",
+                          default=[], type="string",
+                          help="Specify a JSON file")
+    parser.add_option("-s", "--schema-file", action="append", dest="schema_file",
+                          default=[], type="string",
+                          help="Specify a Schema file")
     parser.add_option("-X", "--verbose", action="store_true", dest="verbose",
                           default="", 
                           help="debug dump")
@@ -47,7 +63,7 @@ def url_parse(url):
     logging.debug("scheme %s", url_components.scheme)
     logging.debug("netloc %s", url_components.netloc)
     logging.debug("path %s", url_components.path)
-    logging.debug("query st%sr ", url_components.query)
+    logging.debug("query str %s", url_components.query)
     logging.debug("fragment %s", url_components.fragment)
     logging.debug("hostname %s", url_components.hostname)
     logging.debug("port %s", url_components.port)
@@ -167,6 +183,7 @@ def find_schemes(api_calls):
     return ["https"]
 
 def json2schema(seed, payload):
+    # can return None
     logging.debug("seed schema %s resp payload %s", seed, payload)
     builder = SchemaBuilder(schema_uri=None)
     if seed:
@@ -188,6 +205,80 @@ def json2schema(seed, payload):
     logging.debug('schema updated %s', schema)
     return schema
 
+def spec20_format_request_payload(spec_operation, request_payload):
+    spec_params = spec_operation.get("parameters", [])
+
+    if not request_payload:
+        return spec_params
+
+    existing_schema = None
+    existing_body_param = None
+    for param in spec_params:
+        if param['in'] == 'body':
+            existing_schema = param["schema"]
+            existing_body_param = param
+            break
+
+    new_schema = json2schema(existing_schema, request_payload)
+    if not new_schema:
+        return spec_params
+
+    if existing_body_param:
+        existing_body_param["schema"] = new_schema
+    else:
+        spec_params.append({
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "schema": new_schema
+        })
+    return spec_params
+
+def spec20_format_response(spec_response, response_payload):
+    if "schema" in spec_response:
+        existing_schema = spec_response["schema"]
+    else:
+        existing_schema = None
+    return json2schema(existing_schema, response_payload)
+
+def spec20_format_headers(spec_operation, api_call):
+    spec_params = spec_operation.get("parameters", [])
+    for header_name in api_call["request"]["headers"].keys():
+        if skippable_req_headers(header_name):
+            continue
+
+        if any(param['name'] == header_name and
+                param['in'] == 'header' for param in spec_params):
+            continue
+
+        spec_params.append({
+                "name": header_name,
+                "in": "header",
+                "description": "",
+                "type": "string"
+            }
+        )
+    return spec_params
+
+def spec20_format_qparams(spec_operation, api_call):
+    spec_params = spec_operation.get("parameters", [])
+
+    # Note: param_value is a list, hence keys()
+    # 'query': {'errorcode': ['401']}
+    for param_name in api_call["request"]["query"].keys():
+        if any(param['name'] == param_name and
+                param['in'] == 'query' for param in spec_params):
+            continue
+
+        spec_params.append({
+                "name": param_name,
+                "in": "query",
+                "description": "",
+                "type": "string"
+            }
+        )
+    return spec_params
+
 def spec20_format_calls(api_calls):
     rest_resources = {}
     rest_resources["host"] = find_hosts(api_calls)
@@ -198,7 +289,6 @@ def spec20_format_calls(api_calls):
         path = api_call["request"]["path"]
         verb = api_call["request"]["verb"].lower()
         response_code = api_call["response"]["status_code"]
-        response_payload = api_call["response"]["content"]
 
         if response_code == 404: continue
 
@@ -207,57 +297,43 @@ def spec20_format_calls(api_calls):
 
         if verb not in rest_resources["paths"][path]:
             logging.debug('adding verb %s', verb)
-
-            # query params
-            spec_params = []
-            for param_name, param_value in api_call["request"]["query"].items():
-                spec_params.append({
-                        "name": param_name,
-                        "in": "query",
-                        "description": "",
-                        "type": "string"
-                    }
-                )
-
-            # headers
-            for header_name, header_value in api_call["request"]["headers"].items():
-                if skippable_req_headers(header_name):
-                    continue
-                spec_params.append({
-                        "name": header_name,
-                        "in": "header",
-                        "description": "",
-                        "type": "string"
-                    }
-                )
-
             rest_resources["paths"][path][verb] = {
                 "summary": "",
                 "description": "",
                 "operationId": (verb + path).lower().replace('/','_'),
-                "parameters": spec_params,
                 "responses": {}
             }
 
-        # response codes
+        spec_operation = rest_resources["paths"][path][verb]
+        # query params
+        spec_operation["parameters"] = spec20_format_qparams(spec_operation, api_call)
+        # headers
+        spec_operation["parameters"] = spec20_format_headers(spec_operation, api_call)
+        # request payload
+        if not "content" in api_call["request"]:
+            request_payload = None
+        else:    
+            request_payload = api_call["request"]["content"]
+        spec_operation["parameters"] = spec20_format_request_payload(spec_operation, request_payload)
+
+        logging.debug('request_content %s', request_payload)
+
+        # response code
         logging.debug('response code found %s', response_code)
-        spec_responses = rest_resources["paths"][path][verb]["responses"]
+        spec_responses = spec_operation["responses"]
         if response_code not in spec_responses:
             spec_responses[response_code] = {
                 "description": api_call["response"]["reason_phrase"]
             }
 
-        if not response_payload:
+        # response payload
+        if not "content" in api_call["response"]:
             continue
 
-        if "schema" in spec_responses[response_code]:
-            existing_schema = spec_responses[response_code]["schema"]
-        else:
-            existing_schema = None
-
-        schema_snippet = json2schema(existing_schema, response_payload)
-        if schema_snippet:
-            spec_responses[response_code]["schema"] = schema_snippet
+        response_payload = api_call["response"]["content"]
+        spec_response = spec_responses[response_code]
+        updated_schema = spec20_format_response(spec_response, response_payload)
+        if updated_schema: spec_response["schema"] = updated_schema
     return rest_resources
 
 def spec20_defaults():
@@ -290,19 +366,33 @@ def spec20_assemble(spec_resources):
 def write_json_spec(dict_spec):
     return json.dumps(dict_spec, indent=4, sort_keys=False)
 
-
-def main():
+def tracefile2spec(trace_files):
+    logging.debug("tracefile2spec %s", trace_files)
     api_calls = []
-    options = cli_args()
-    for trace_file in options.file:
+    for trace_file in trace_files:
         trace_file_parse(trace_file, api_calls)
 
     logging.debug("--------------------- generating spec ---------------------")
     spec_resources = spec20_format_calls(api_calls)
     dict_spec = spec20_assemble(spec_resources)
     json_spec = write_json_spec(dict_spec)
-
     print(json_spec)
 
+def jsonfile2schema(json_files):
+    logging.debug("jsonfile2schema %s", json_files)
+    return
+
+def main():
+    options = cli_args()
+
+    if options.file:
+        tracefile2spec(options.file)
+        return
+
+    if options.json_file:        
+        jsonfile2schema(options.json_file)
+        return
+
+    usage()
 
 main()
