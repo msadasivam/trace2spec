@@ -1,20 +1,24 @@
 # trace2spec
-Generate Open API Spec from Apigee trace file
+Generate Open API Spec from Apigee trace files.
 
-Works with API calls traced in any order including calls returning error. 
-Supports the following features:
+Reverse engineer API calls traced on Apigee to create Open API Specs. OAS have become a common place in RESTful web APIs and serve as a starting point to create API proxies, API documentation, stubs, testcases, etc. Several systems exist today without a well defined spec. Creating a passthrough layer in Apigee allows one to capture traffic and export as trace files. These trace files can then be fed to this tool to create OAS. 
+
+The generated specs are only a best effort attempt, they require some cleanup to update business context in description. Further work may be needed to clean and consolidate schema reused in multiple resources. 
+ 
+The tool supports the following features:
  * Hosts
  * REST resource paths
  * Query parameters
  * Headers
- * Request payload schema
- * Response codes
- * Response payload schema
+ * Request payload JSON schema
+ * Success and error response codes
+ * Response payload JSON schema
  * Multiple trace file support
  
-More to come
+More features being considered are as follows:
  * Resource path params
  * Security schemes
+ * Non-JSON content types
 
 ## Usage
 ```
