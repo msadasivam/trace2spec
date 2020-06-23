@@ -144,25 +144,49 @@ def trace_file_parse(trace_file, api_calls):
             if phase == 'RESP_SENT':
                 logging.debug('phase %s', phase)
                 res_data = data_point_elem.find('./ResponseMessage')
-                for header in res_data.findall('./Headers/Header'):
-                    header_value = header.text
-                    header_name = header.attrib["name"]
-                    logging.debug('header %s %s', header_name, header_value)
+                if res_data:
+                    for header in res_data.findall('./Headers/Header'):
+                        header_value = header.text
+                        header_name = header.attrib["name"]
+                        logging.debug('header %s %s', header_name, header_value)
 
-                status_code = res_data.find('StatusCode').text
-                reason_phrase = res_data.find('ReasonPhrase').text
-                node = res_data.find('Content')
-                if node is not None:
-                    resp_content = node.text
-                else:
-                    resp_content = ""
+                    status_code = res_data.find('StatusCode').text
+                    reason_phrase = res_data.find('ReasonPhrase').text
+                    node = res_data.find('Content')
+                    if node is not None:
+                        resp_content = node.text
+                    else:
+                        resp_content = ""
 
-                req_resp["response"] = {
-                    "status_code": status_code,
-                    "reason_phrase": reason_phrase,
-                    "headers": headers,
-                    "content": resp_content
-                }
+                    req_resp["response"] = {
+                        "status_code": status_code,
+                        "reason_phrase": reason_phrase,
+                        "headers": headers,
+                        "content": resp_content
+                    }
+
+                err_data = data_point_elem.find('./ErrorMessage')
+                if err_data:
+                    for header in err_data.findall('./Headers/Header'):
+                        header_value = header.text
+                        header_name = header.attrib["name"]
+                        logging.debug('header %s %s', header_name, header_value)
+
+                    status_code = err_data.find('StatusCode').text
+                    reason_phrase = err_data.find('ReasonPhrase').text
+                    node = err_data.find('Content')
+                    if node is not None:
+                        resp_content = node.text
+                    else:
+                        resp_content = ""
+
+                    req_resp["response"] = {
+                        "status_code": status_code,
+                        "reason_phrase": reason_phrase,
+                        "headers": headers,
+                        "content": resp_content
+                    }
+
 
                 logging.debug('status_code %s', status_code)
                 logging.debug('reason_phrase %s', reason_phrase)

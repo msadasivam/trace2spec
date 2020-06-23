@@ -1,9 +1,9 @@
 # trace2spec
 Generate Open API Spec from Apigee trace files.
 
-This script helps reverse engineer API calls traced on [Apigee](https://cloud.google.com/apigee) to create an [Open API Spec](https://en.wikipedia.org/wiki/OpenAPI_Specification). OAS is now a widely accepted mechanism to capture RESTful web APIs design and serve as a starting point to create API proxies, API documentation, stubs, testcases, etc. Several systems exist today without a well defined spec. Creating a passthrough layer in Apigee allows one to capture traffic and [export as trace files](https://docs.apigee.com/api-platform/debug/using-offline-trace-tool). These trace files can then be fed to this tool to create OAS. 
+This script helps reverse engineer API calls traced on [Apigee](https://cloud.google.com/apigee) to create an [Open API Spec](https://en.wikipedia.org/wiki/OpenAPI_Specification). OAS is now a widely accepted mechanism to capture RESTful web APIs design and serve as a starting point to create API proxies, API documentation, stubs, testcases, etc. 
 
-The generated specs are only a best effort attempt, they require some cleanup to update business context in description. Further work may be needed to clean and consolidate schema reused in multiple resources. 
+Several systems exist today without a well defined spec. Creating a passthrough layer in Apigee allows one to capture traffic and [export as trace files](https://docs.apigee.com/api-platform/debug/using-offline-trace-tool). These trace files can then be fed to this tool to create OAS.  The generated specs are only a best effort attempt, they require some cleanup to update business context in description. Further work may be needed to clean and consolidate schema reused in multiple resources. 
  
 The tool supports the following features:
  * Hosts
